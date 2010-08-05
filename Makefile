@@ -13,4 +13,4 @@ include $(GOROOT)/src/Make.pkg
 	$(LD) -o $@ $*.$O
 
 format:
-	gofmt -w alpm.go alpm_list.go alpm_test.go
+	gofmt -w=true -tabindent=false -tabwidth=2 *.go
