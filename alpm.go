@@ -5,8 +5,15 @@ package alpm
 #include <sys/types.h>
 #include <time.h>
 #include <stdarg.h>
-#include "list/list.go"
 */
 import "C"
 
 
+func Initialize() {
+	C.alpm_initialize()
+}
+
+func Version() string {
+	p := C.alpm_version()
+	return C.GoString(p)
+}

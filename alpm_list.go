@@ -1,4 +1,4 @@
-package list
+package alpm
 
 /*
 #include <stdlib.h>
@@ -7,17 +7,17 @@ package list
 import "C"
 
 import (
-  "unsafe"
+	"unsafe"
 )
 
 type AlpmList struct {
-  alpm_list_t *C.alpm_list_t
+	alpm_list_t *C.alpm_list_t
 }
 
 func (v AlpmList) Free() {
-  C.alpm_list_free(v.alpm_list_t)
+	C.alpm_list_free(v.alpm_list_t)
 }
 
 func (v AlpmList) Add(data unsafe.Pointer) *AlpmList {
-  return &AlpmList{C.alpm_list_add(v.alpm_list_t, data)}
+	return &AlpmList{C.alpm_list_add(v.alpm_list_t, data)}
 }
