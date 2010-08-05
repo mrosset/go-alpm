@@ -24,6 +24,10 @@ func (v *AlpmList) Add(data unsafe.Pointer) *AlpmList {
   return &AlpmList{C.alpm_list_add(v.alpm_list_t, data)}
 }
 
+func (v *AlpmList) Join(other *C.alpm_list_t) *AlpmList {
+  return &AlpmList{C.alpm_list_join(v.alpm_list_t, other)}
+}
+
 /* accessors */
 func (v *AlpmList) First() *AlpmList {
   return &AlpmList{C.alpm_list_first(v.alpm_list_t)}
@@ -46,4 +50,7 @@ func (v *AlpmList) GetData() interface{} {
 }
 
 /* misc */
+func (v *AlpmList) Count() uint {
+  return uint(C.alpm_list_count(v.alpm_list_t))
+}
 
