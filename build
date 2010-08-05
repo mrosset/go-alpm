@@ -1,4 +1,5 @@
 #!/bin/bash
 
-make
+make clean
+make install
 make test
