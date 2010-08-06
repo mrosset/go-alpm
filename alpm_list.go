@@ -20,12 +20,12 @@ func (v *AlpmList) Free() {
 }
 
 /* mutators */
-func (v *AlpmList) Add(data unsafe.Pointer) *AlpmList {
-  return &AlpmList{C.alpm_list_add(v.alpm_list_t, data)}
+func (v *AlpmList) Add(data unsafe.Pointer) {
+  v = &AlpmList{C.alpm_list_add(v.alpm_list_t, data)}
 }
 
-func (v *AlpmList) Join(other *C.alpm_list_t) *AlpmList {
-  return &AlpmList{C.alpm_list_join(v.alpm_list_t, other)}
+func (v *AlpmList) Join(other *C.alpm_list_t) {
+  v = &AlpmList{C.alpm_list_join(v.alpm_list_t, other)}
 }
 
 /* accessors */
@@ -46,7 +46,7 @@ func (v *AlpmList) Last() *AlpmList {
 }
 
 func (v *AlpmList) GetData() interface{} {
-  return v.alpm_list_t.data
+  return C.alpm_list_getdata(v.alpm_list_t)
 }
 
 /* misc */
@@ -54,3 +54,10 @@ func (v *AlpmList) Count() uint {
   return uint(C.alpm_list_count(v.alpm_list_t))
 }
 
+func (v *AlpmList) FindStr(needle *C.char) string {
+  return C.GoString(C.alpm_list_find_str(v.alpm_list_t, needle))
+}
+
+func (v *AlpmList) FindPtr(needle unsafe.Pointer) interface{} {
+  return C.alpm_list_find_ptr(v.alpm_list_t, needle)
+}
