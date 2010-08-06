@@ -20,12 +20,12 @@ func (v *AlpmList) Free() {
 }
 
 /* mutators */
-func (v *AlpmList) Add(data unsafe.Pointer) *AlpmList {
-  return &AlpmList{C.alpm_list_add(v.alpm_list_t, data)}
+func (v *AlpmList) Add(data unsafe.Pointer) {
+  v = &AlpmList{C.alpm_list_add(v.alpm_list_t, data)}
 }
 
-func (v *AlpmList) Join(other *C.alpm_list_t) *AlpmList {
-  return &AlpmList{C.alpm_list_join(v.alpm_list_t, other)}
+func (v *AlpmList) Join(other *C.alpm_list_t) {
+  v = &AlpmList{C.alpm_list_join(v.alpm_list_t, other)}
 }
 
 /* accessors */
