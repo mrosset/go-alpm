@@ -14,6 +14,5 @@ func Initialize() {
 }
 
 func Version() string {
-  p := C.alpm_version()
-  return C.GoString(p)
+  return C.GoString(C.alpm_version())
 }
