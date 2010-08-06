@@ -46,7 +46,7 @@ func (v *AlpmList) Last() *AlpmList {
 }
 
 func (v *AlpmList) GetData() interface{} {
-  return v.alpm_list_t.data
+  return C.alpm_list_getdata(v.alpm_list_t)
 }
 
 /* misc */
@@ -54,3 +54,10 @@ func (v *AlpmList) Count() uint {
   return uint(C.alpm_list_count(v.alpm_list_t))
 }
 
+func (v *AlpmList) FindStr(needle *C.char) string {
+  return C.GoString(C.alpm_list_find_str(v.alpm_list_t, needle))
+}
+
+func (v *AlpmList) FindPtr(needle unsafe.Pointer) interface{} {
+  return C.alpm_list_find_ptr(v.alpm_list_t, needle)
+}
