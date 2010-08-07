@@ -1,5 +1,4 @@
 #!/bin/bash
 
-make clean
-make install
+make install || { echo "**ERROR** building"; exit; } && 
 make test
