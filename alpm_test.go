@@ -1,7 +1,6 @@
 package alpm
 
 import "testing"
-import "fmt"
 
 func TestRelease(t *testing.T) {
   Initialize()
@@ -20,7 +19,7 @@ func TestInitialize(t *testing.T) {
 }
 
 func TestVersion(t *testing.T) {
-  if Version() != "5.0.0" {
+  if Version() != "5.0.3" {
     t.Fail()
   }
 }
