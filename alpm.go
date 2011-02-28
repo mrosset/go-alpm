@@ -2,78 +2,112 @@ package alpm
 
 /*
 #include <alpm.h>
-#include <stdio.h>
 #include <alpm_list.h>
-#include <sys/types.h>
-#include <time.h>
-#include <stdarg.h>
 */
 import "C"
-
 import (
-  "os"
-  "fmt"
+	"C"
+	"os"
+	"fmt"
 )
+
+var initialized = false
 
 // Initializes libalpm
 func Init() os.Error {
-  if C.alpm_initialize() != 0 {
-    return lastError()
-  }
-  return nil
+	if initialized {
+		return nil
+	}
+
+	if C.alpm_initialize() != 0 {
+		return LastError()
+	}
+	initialized = true
+	return nil
 }
 
 // Release libalpm
 func Release() os.Error {
-  if C.alpm_release() != 0 {
-    return lastError()
-  }
-  return nil
+	if C.alpm_release() != 0 {
+		return LastError()
+	}
+	initialized = false
+	return nil
+}
+
+func OptionSetRoot(s string) os.Error {
+	cs := C.CString(s)
+	if C.alpm_option_set_root(cs) != 0 {
+		return LastError()
+	}
+	return nil
+}
+
+func OptionSetDbpath(s string) os.Error {
+	cs := C.CString(s)
+	if C.alpm_option_set_dbpath(cs) != 0 {
+		return LastError()
+	}
+	return nil
+}
+
+func OptionGetRoot() string {
+	return C.GoString(C.alpm_option_get_root())
+}
+
+func OptionGetDBpath() string {
+	return C.GoString(C.alpm_option_get_dbpath())
 }
 
 // Returns libalpm version
 func Version() string {
-  return C.GoString(C.alpm_version())
+	return C.GoString(C.alpm_version())
+}
+
+func ListNext() {
 }
 
 // Get the last pm_error
-func lastError() os.Error {
-  return os.NewError(C.GoString(C.alpm_strerrorlast()))
+func LastError() os.Error {
+	return os.NewError(C.GoString(C.alpm_strerrorlast()))
 }
 
-func Test {
-	C.alpm_list_t *i;
+func test() bool {
 
-	if(C.alpm_initialize() != 0) {
-		C.printf("could not int alpm\n")
-        return
+	if Init() != nil {
+		return false
 	}
 
-	if (C.alpm_option_set_root("/") != 0) {
-		C.printf("failed setting root option\n")
-		C.alpm_release();
-		return
+	if OptionSetRoot("/") != nil {
+		Release()
+		return false
 	}
 
-  if (C.alpm_option_set_dbpath("/var/lib/pacman") != 0) {
-		C.printf("failed setting db path\n")
-		C.alpm_release()
-		return
+	if OptionSetDbpath("/var/lib/pacman") != nil {
+		Release()
+		return false
 	}
 
-	C.printf("root = %s\n", C.alpm_option_get_root());
-	C.printf("dbpath = %s\n", C.alpm_option_get_dbpath())
+	db_local := C.alpm_db_register_local()
+	searchlist := C.alpm_db_get_pkgcache(db_local)
 
-	C.pmdb_t *db_local = C.alpm_db_register_local()
-	C.alpm_list_t *searchlist = C.alpm_db_get_pkgcache(db_local)
-
-	/*for(i = searchlist; i ; i = alpm_list_next(i)) {
-		pmpkg_t *pkg = alpm_list_getdata(i);
-		printf("local/%s %s\n", alpm_pkg_get_name(pkg), alpm_pkg_get_version(pkg));
-	}*/
-
-	if(C.alpm_release() != 0) {
-		C.printf("could not release alpm\n");
+	for i := searchlist; i != nil; i = C.alpm_list_next(i) {
+		//printT(C.alpm_list_getdata(i))
+		//pkg := (*[0]uint8)(C.alpm_list_getdata(i))
+		//printfl(C.GoString(C.alpm_pkg_get_name(pkg)))
 	}
-	return
+
+	if Release() != nil {
+		return false
+	}
+	return true
+}
+
+func printfl(format string, i ...interface{}) {
+	fmt.Printf(format+"\n", i...)
+}
+
+
+func printT(i interface{}) {
+	printfl("%T = %v", i, i)
 }
