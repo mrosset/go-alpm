@@ -1,22 +1,24 @@
+# Copyright 2009 The Go Authors.  All rights reserved.
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file.
+
 include $(GOROOT)/src/Make.inc
 
-TARG     = alpm
-CGOFILES = alpm.go alpm_list.go
+.PHONY: all alpm clean
 
-CGO_CFLAGS  = -L/usr/include/ -L./
-CGO_LDFLAGS = -lalpm
+all: alpm
 
-CLEANFILES+=main
+alpm:
+	gomake -C alpm
 
-include $(GOROOT)/src/Make.pkg
+install: alpm
+	gomake -C alpm install
 
-%: install %.go
-	$(GC) $*.go
-	$(LD) -o $@ $*.$O
+examples:
+	gomake -C examples
 
-main: main.c
-	gcc -lalpm main.c -o main
-format:
-	gofmt -l -s -w -tabindent -tabwidth=4 *.go
+clean:
+	gomake -C alpm clean
 
-all: main format
+test:
+	gomake -C alpm test

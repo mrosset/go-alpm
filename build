@@ -1,4 +1,0 @@
-#!/bin/bash
-
-make install || { echo "**ERROR** building"; exit; } && 
-make test
