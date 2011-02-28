@@ -37,8 +37,8 @@ func (v *AlpmList) First() *AlpmList {
 	return &AlpmList{C.alpm_list_first(v.Alpm_list_t)}
 }
 
-func (v *AlpmList) Nth(n C.int) *AlpmList {
-	return &AlpmList{C.alpm_list_nth(v.Alpm_list_t, n)}
+func (v *AlpmList) Nth(n uint) *AlpmList {
+	return &AlpmList{C.alpm_list_nth(v.Alpm_list_t, C.int(n))}
 }
 
 func (v *AlpmList) Next() *AlpmList {
@@ -49,8 +49,8 @@ func (v *AlpmList) Last() *AlpmList {
 	return &AlpmList{C.alpm_list_last(v.Alpm_list_t)}
 }
 
-func (v *AlpmList) GetData() unsafe.Pointer {
-	return v.Alpm_list_t.data
+func (v *AlpmList) GetData() *[0]uint8 {
+	return (*[0]uint8) (v.Alpm_list_t.data)
 }
 
 /* misc */

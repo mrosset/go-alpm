@@ -1,7 +1,7 @@
 include $(GOROOT)/src/Make.inc
 
 TARG     = alpm
-CGOFILES = alpm.go alpm_list.go
+CGOFILES = alpm.go alpm_list.go db.go
 
 CGO_CFLAGS  = -L/usr/include/ -L./
 CGO_LDFLAGS = -lalpm

@@ -64,9 +64,6 @@ func Version() string {
 	return C.GoString(C.alpm_version())
 }
 
-func ListNext() {
-}
-
 // Get the last pm_error
 func LastError() os.Error {
 	return os.NewError(C.GoString(C.alpm_strerrorlast()))
@@ -88,13 +85,15 @@ func test() bool {
 		return false
 	}
 
-	db_local := C.alpm_db_register_local()
-	searchlist := C.alpm_db_get_pkgcache(db_local)
-
-	for i := searchlist; i != nil; i = C.alpm_list_next(i) {
-		//printT(C.alpm_list_getdata(i))
-		//pkg := (*[0]uint8)(C.alpm_list_getdata(i))
-		//printfl(C.GoString(C.alpm_pkg_get_name(pkg)))
+	db_local := DbRegisterLocal()
+	searchlist := DbGetPkgCache(db_local)
+	//for i := searchlist; i != nil; i = C.alpm_list_next(i) {
+    printT(searchlist.Count())
+    for i := uint(0); i < searchlist.Count(); i++ {
+		list := searchlist.Nth(i)
+        pkg := list.GetData()
+        name := PkgGetName(pkg)
+        printT(name)
 	}
 
 	if Release() != nil {
@@ -103,11 +102,6 @@ func test() bool {
 	return true
 }
 
-func printfl(format string, i ...interface{}) {
-	fmt.Printf(format+"\n", i...)
-}
-
-
 func printT(i interface{}) {
-	printfl("%T = %v", i, i)
+	fmt.Printf("%T = %v\n", i, i)
 }

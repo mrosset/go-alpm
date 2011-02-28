@@ -4,21 +4,23 @@
 
 include $(GOROOT)/src/Make.inc
 
-.PHONY: all alpm clean
+.PHONY: all alpm examples clean
 
-all: alpm
+all: alpm examples
 
 alpm:
 	gomake -C alpm
 
 install: alpm
 	gomake -C alpm install
+	gomake -C examples install
 
 examples:
 	gomake -C examples
 
 clean:
 	gomake -C alpm clean
+	gomake -C examples clean
 
 test:
 	gomake -C alpm test
