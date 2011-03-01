@@ -15,4 +15,4 @@ include $(GOROOT)/src/Make.pkg
 	$(LD) -o $@ $*.$O
 
 format:
-	gofmt -l -s -w -tabindent -tabwidth=4 *.go
+	gofmt -l -s -w -tabindent -tabwidth=2 *.go

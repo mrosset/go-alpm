@@ -50,7 +50,7 @@ func (v *AlpmList) Last() *AlpmList {
 }
 
 func (v *AlpmList) GetData() *[0]uint8 {
-	return (*[0]uint8) (v.Alpm_list_t.data)
+	return (*[0]uint8)(v.Alpm_list_t.data)
 }
 
 /* misc */

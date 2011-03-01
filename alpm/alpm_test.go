@@ -17,14 +17,14 @@ func init() {
 	}
 }
 
-func TestOptionSetDBpath(t *testing.T) {
-	if err := OptionSetDbpath(dbpath); err != nil {
+func TestSetDBPath(t *testing.T) {
+	if err := SetDbPath(dbpath); err != nil {
 		t.Error(err)
 	}
 }
 
-func TestOptionSetRoot(t *testing.T) {
-	if err := OptionSetRoot(root); err != nil {
+func TestSetRoot(t *testing.T) {
+	if err := SetRoot(root); err != nil {
 		t.Error(err)
 	}
 }

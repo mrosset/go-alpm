@@ -9,23 +9,24 @@ func main() {
 		os.Exit(1)
 	}
 
-	if alpm.OptionSetRoot("/") != nil {
+	if alpm.SetRoot("/") != nil {
 		alpm.Release()
 		os.Exit(1)
 	}
 
-	if alpm.OptionSetDbpath("/var/lib/pacman") != nil {
+	if alpm.SetDbPath("/var/lib/pacman") != nil {
 		alpm.Release()
 		os.Exit(1)
 	}
 
-	db_local := alpm.DbRegisterLocal()
-	searchlist := alpm.DbGetPkgCache(db_local)
+	db := &alpm.DataBase{}
+	db.RegisterLocal()
+	searchlist := db.GetPkgCache()
 
 	for i := uint(0); i < searchlist.Count(); i++ {
 		list := searchlist.Nth(i)
-		pkg := list.GetData()
-		name := alpm.PkgGetName(pkg)
+		pkg := &alpm.Package{list.GetData()}
+		name := pkg.GetName()
 		println(name)
 	}
 

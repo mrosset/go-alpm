@@ -2,7 +2,6 @@ package alpm
 
 /*
 #include <alpm.h>
-#include <alpm_list.h>
 */
 import "C"
 import (
@@ -35,7 +34,7 @@ func Release() os.Error {
 	return nil
 }
 
-func OptionSetRoot(s string) os.Error {
+func SetRoot(s string) os.Error {
 	cs := C.CString(s)
 	if C.alpm_option_set_root(cs) != 0 {
 		return LastError()
@@ -43,7 +42,7 @@ func OptionSetRoot(s string) os.Error {
 	return nil
 }
 
-func OptionSetDbpath(s string) os.Error {
+func SetDbPath(s string) os.Error {
 	cs := C.CString(s)
 	if C.alpm_option_set_dbpath(cs) != 0 {
 		return LastError()
@@ -51,11 +50,11 @@ func OptionSetDbpath(s string) os.Error {
 	return nil
 }
 
-func OptionGetRoot() string {
+func GetRoot() string {
 	return C.GoString(C.alpm_option_get_root())
 }
 
-func OptionGetDBpath() string {
+func GetDbPath() string {
 	return C.GoString(C.alpm_option_get_dbpath())
 }
 
@@ -70,36 +69,28 @@ func LastError() os.Error {
 }
 
 func test() bool {
-
-	if Init() != nil {
-		return false
-	}
-
-	if OptionSetRoot("/") != nil {
-		Release()
-		return false
-	}
-
-	if OptionSetDbpath("/var/lib/pacman") != nil {
-		Release()
-		return false
-	}
-
-	db_local := DbRegisterLocal()
-	searchlist := DbGetPkgCache(db_local)
-	//for i := searchlist; i != nil; i = C.alpm_list_next(i) {
-    printT(searchlist.Count())
-    for i := uint(0); i < searchlist.Count(); i++ {
+	Init()
+	defer Release()
+	SetRoot("/")
+	SetDbPath("/var/lib/pacman")
+	db := &DataBase{}
+	db.RegisterSync("core")
+	db.RegisterSync("community")
+	db.RegisterSync("extra")
+	searchlist := db.GetPkgCache()
+	printT(searchlist)
+	for i := uint(0); i < searchlist.Count(); i++ {
 		list := searchlist.Nth(i)
-        pkg := list.GetData()
-        name := PkgGetName(pkg)
-        printT(name)
+		pkg := &Package{list.GetData()}
+		println(pkg.GetName())
 	}
-
-	if Release() != nil {
-		return false
-	}
+	fmt.Printf("%v\n", LastError().String())
 	return true
+}
+
+
+func prints(prefix string, s *_Ctype_char) {
+	fmt.Printf("%v = %v\n", prefix, C.GoString(s))
 }
 
 func printT(i interface{}) {
