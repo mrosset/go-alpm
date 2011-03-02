@@ -6,9 +6,9 @@ package alpm
 import "C"
 
 type Package struct {
-	Pmpkg *[0]uint8
+  Pmpkg *[0]uint8
 }
 
 func (v *Package) GetName() string {
-	return C.GoString(C.alpm_pkg_get_name(v.Pmpkg))
+  return C.GoString(C.alpm_pkg_get_name(v.Pmpkg))
 }
