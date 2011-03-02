@@ -2,6 +2,7 @@ package main
 
 import "alpm"
 import "os"
+import "fmt"
 
 func main() {
 
@@ -19,15 +20,14 @@ func main() {
 		os.Exit(1)
 	}
 
-	db := &alpm.DataBase{}
-	db.RegisterLocal()
-	searchlist := db.GetPkgCache()
+	db := alpm.RegisterLocalDb()
+	searchlist := alpm.GetPkgCache(db)
 
 	for i := uint(0); i < searchlist.Count(); i++ {
 		list := searchlist.Nth(i)
 		pkg := &alpm.Package{list.GetData()}
 		name := pkg.GetName()
-		println(name)
+		fmt.Printf("%v \n",name)
 	}
 
 	if alpm.Release() != nil {

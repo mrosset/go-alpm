@@ -69,25 +69,26 @@ func LastError() os.Error {
 }
 
 func test() bool {
-	Init()
-	defer Release()
-	SetRoot("/")
-	SetDbPath("/var/lib/pacman")
-	db := &DataBase{}
-	db.RegisterSync("core")
-	db.RegisterSync("community")
-	db.RegisterSync("extra")
-	searchlist := db.GetPkgCache()
-	printT(searchlist)
+	db := RegisterLocalDb()
+	searchlist := GetPkgCache(db)
+
 	for i := uint(0); i < searchlist.Count(); i++ {
 		list := searchlist.Nth(i)
 		pkg := &Package{list.GetData()}
-		println(pkg.GetName())
+		name := pkg.GetName()
+		fmt.Printf("%v \n", name)
 	}
-	fmt.Printf("%v\n", LastError().String())
+
+	println(LastError().String())
 	return true
 }
 
+
+func SetOptions() {
+	SetRoot("/")
+	SetDbPath("/var/lib/pacman")
+
+}
 
 func prints(prefix string, s *_Ctype_char) {
 	fmt.Printf("%v = %v\n", prefix, C.GoString(s))

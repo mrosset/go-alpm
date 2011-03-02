@@ -1,12 +1,19 @@
 include $(GOROOT)/src/Make.inc
 
-TARG=installed
-GOFILES=installed.go
+all: installed search
 
-include $(GOROOT)/src/Make.cmd
+installed: installed.go
+	$(GC) installed.go
+	$(LD) -o $@ installed.$(O)
 
-test: format all
-	./installed
+search: search.go
+	$(GC) search.go
+	$(LD) -o $@ search.$(O)
+
+clean:
+	rm -f -r *.8 *.6 *.o */*.8 */*.6 */*.o */_obj installed search
 
 format:
 	gofmt -l -s -w -tabindent -tabwidth=4 *.go
+
+test: all
