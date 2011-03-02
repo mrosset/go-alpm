@@ -1,6 +1,6 @@
 include $(GOROOT)/src/Make.inc
 
-TARG     = alpm
+TARG     = github.com/str1ngs/go-alpm
 CGOFILES = alpm.go list.go db.go package.go
 
 CGO_CFLAGS  = -L/usr/include/ -L./
