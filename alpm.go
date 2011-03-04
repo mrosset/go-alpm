@@ -10,7 +10,7 @@ import (
   "fmt"
 )
 
-var initialized = false
+var initialized bool = false
 
 // Initializes libalpm
 func Init() os.Error {
@@ -83,11 +83,9 @@ func test() bool {
   return true
 }
 
-
 func SetOptions() {
   SetRoot("/")
   SetDbPath("/var/lib/pacman")
-
 }
 
 func prints(prefix string, s *_Ctype_char) {
