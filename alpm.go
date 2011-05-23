@@ -1,8 +1,7 @@
 package alpm
 
-/*
-#include <alpm.h>
-*/
+// #cgo LDFLAGS: -lalpm
+// #include <alpm.h>
 import "C"
 import (
 	"os"
