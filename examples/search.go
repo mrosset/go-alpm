@@ -1,6 +1,6 @@
 package main
 
-import "alpm"
+import alpm "github.com/str1ngs/go-alpm"
 import "fmt"
 
 func main() {
