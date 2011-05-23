@@ -1,6 +1,7 @@
 package alpm
 
 import (
+	"fmt"
 	"os"
 	"testing"
 )
@@ -37,9 +38,17 @@ func TestVersion(t *testing.T) {
 	}
 }
 
-func TestRun(t *testing.T) {
-	if err := test(); err != nil {
-		t.Errorf("test() failed. with error %s", err.String())
+func TestLocalDB(t *testing.T) {
+	defer func() {
+		if recover() != nil {
+			t.Errorf("local db failed")
+		}
+	}()
+	db := GetLocalDb()
+	searchlist := GetPkgCache(db)
+	for i := searchlist.Next(); i.Alpm_list_t != nil; i = i.Next() {
+		pkg := &Package{i.GetData()}
+		fmt.Printf("%v \n", pkg.GetName())
 	}
 }
 

@@ -13,7 +13,7 @@ var (
 	println          = fmt.Println
 )
 
-// Initializes libalpm
+// Initialize
 func Init() os.Error {
 	if initialized {
 		return nil
@@ -25,7 +25,6 @@ func Init() os.Error {
 	return nil
 }
 
-// Release libalpm
 func Release() os.Error {
 	if C.alpm_release() != 0 {
 		return LastError()
@@ -34,6 +33,10 @@ func Release() os.Error {
 	return nil
 }
 
+
+// DB 
+
+// Options
 func SetRoot(s string) os.Error {
 	cs := C.CString(s)
 	if C.alpm_option_set_root(cs) != 0 {
@@ -58,30 +61,18 @@ func GetDbPath() string {
 	return C.GoString(C.alpm_option_get_dbpath())
 }
 
-// Returns libalpm version
-func Version() string {
-	return C.GoString(C.alpm_version())
-}
-
 // Get the last pm_error
 func LastError() os.Error {
 	return os.NewError(C.GoString(C.alpm_strerrorlast()))
 }
 
-func test() os.Error {
-	db := GetLocalDB()
-	searchlist := GetPkgCache(db)
-	for i := uint(0); i < searchlist.Count(); i++ {
-		list := searchlist.Nth(i)
-		pkg := &Package{list.GetData()}
-		name := pkg.GetName()
-		fmt.Printf("%v \n", name)
-	}
-	return nil
+func GetLocalDb() *[0]uint8 {
+	return C.alpm_option_get_localdb()
 }
 
-func GetLocalDB() *[0]uint8 {
-	return C.alpm_option_get_localdb()
+// Helper functions
+func Version() string {
+	return C.GoString(C.alpm_version())
 }
 
 func SetOptions() (err os.Error) {
@@ -94,10 +85,21 @@ func SetOptions() (err os.Error) {
 	return
 }
 
+// private test functions
 func prints(prefix string, s *_Ctype_char) {
 	fmt.Printf("%v = %v\n", prefix, C.GoString(s))
 }
 
 func printT(i interface{}) {
 	fmt.Printf("%T = %v\n", i, i)
+}
+
+func test() os.Error {
+	db := GetLocalDb()
+	searchlist := GetPkgCache(db)
+	for i := searchlist.Next(); i.Alpm_list_t != nil; i = i.Next() {
+		pkg := &Package{i.GetData()}
+		fmt.Printf("%v \n", pkg.GetName())
+	}
+	return nil
 }

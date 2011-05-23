@@ -28,7 +28,7 @@ int main() {
 	printf("root = %s\n", alpm_option_get_root());
 	printf("dbpath = %s\n", alpm_option_get_dbpath());
 
-	pmdb_t *db_local = alpm_db_register_local();
+	pmdb_t *db_local = alpm_option_get_localdb();
 	alpm_list_t *searchlist = alpm_db_get_pkgcache(db_local);
 
 	for(i = searchlist; i ; i = alpm_list_next(i)) {

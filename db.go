@@ -5,10 +5,6 @@ package alpm
 */
 import "C"
 
-//func RegisterLocalDb() *[0]uint8 {
-// return C.alpm_db_register_local()
-//}
-
 func RegisterSyncDb(s string) *[0]uint8 {
 	return C.alpm_db_register_sync(C.CString(s))
 }

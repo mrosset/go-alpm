@@ -4,6 +4,9 @@ LDFLAGS = -lalpm
 
 CLEANFILES+=main
 
+test: main
+	./main
+
 main: main.c
 
 clean:
