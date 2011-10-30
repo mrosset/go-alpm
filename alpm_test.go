@@ -9,26 +9,17 @@ import (
 const (
 	root    = "/"
 	dbpath  = "/var/lib/pacman"
-	version = "6.0.2"
+	version = "7.0.0"
 )
 
+var h *Handle
+
 func init() {
-	err := Init()
+	var err os.Error
+	h, err = Init("/", "/var/lib/pacman")
 	if err != nil {
-		println("Init() failed w can not continue from here")
+		fmt.Printf("failed to Init(): %s", err)
 		os.Exit(1)
-	}
-}
-
-func TestSetDBPath(t *testing.T) {
-	if err := SetDbPath(dbpath); err != nil {
-		t.Error(err)
-	}
-}
-
-func TestSetRoot(t *testing.T) {
-	if err := SetRoot(root); err != nil {
-		t.Error(err)
 	}
 }
 
@@ -44,7 +35,7 @@ func TestLocalDB(t *testing.T) {
 			t.Errorf("local db failed")
 		}
 	}()
-	db := GetLocalDb()
+	db := h.GetLocalDb()
 	searchlist := GetPkgCache(db)
 	for i := searchlist.Next(); i.Alpm_list_t != nil; i = i.Next() {
 		pkg := &Package{i.GetData()}
@@ -53,10 +44,7 @@ func TestLocalDB(t *testing.T) {
 }
 
 func TestRelease(t *testing.T) {
-	if !initialized {
-		Init()
-	}
-	if err := Release(); err != nil {
+	if err := h.Release(); err != nil {
 		t.Error(err)
 	}
 }

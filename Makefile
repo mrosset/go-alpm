@@ -1,7 +1,11 @@
 include $(GOROOT)/src/Make.inc
 
-TARG=github.com/str1ngs/go-alpm
-CGOFILES=alpm.go list.go db.go package.go
+TARG=alpm
+CGOFILES=alpm.go\
+	 error.go\
+	 list.go\
+	 db.go\
+	 package.go
 
 include $(GOROOT)/src/Make.pkg
 

@@ -3,75 +3,60 @@ package alpm
 // #cgo LDFLAGS: -lalpm
 // #include <alpm.h>
 import "C"
+
 import (
 	"os"
-	"fmt"
+	"unsafe"
 )
 
-var (
-	initialized bool = false
-	println          = fmt.Println
-)
+type Handle struct {
+	ptr *C.alpm_handle_t
+}
 
 // Initialize
-func Init() os.Error {
-	if initialized {
-		return nil
+func Init(root, dbpath string) (*Handle, os.Error) {
+	c_root := C.CString(root)
+	defer C.free(unsafe.Pointer(c_root))
+	c_dbpath := C.CString(dbpath)
+	defer C.free(unsafe.Pointer(c_dbpath))
+	var c_err C.enum__alpm_errno_t
+	h := C.alpm_initialize(c_root, c_dbpath, &c_err)
+
+	if c_err != 0 {
+		return nil, Error(c_err)
 	}
-	if C.alpm_initialize() != 0 {
-		return LastError()
-	}
-	initialized = true
-	return nil
+
+	return &Handle{h}, nil
 }
 
-func Release() os.Error {
-	if C.alpm_release() != 0 {
-		return LastError()
+func (h *Handle) Release() os.Error {
+	if er := C.alpm_release(h.ptr); er != 0 {
+		return Error(er)
 	}
-	initialized = false
+	h.ptr = nil
 	return nil
 }
-
 
 // DB 
 
-func GetRoot() string {
-	return C.GoString(C.alpm_option_get_root())
+func (h Handle) GetRoot() string {
+	return C.GoString(C.alpm_option_get_root(h.ptr))
 }
 
-func GetDbPath() string {
-	return C.GoString(C.alpm_option_get_dbpath())
+func (h Handle) GetDbPath() string {
+	return C.GoString(C.alpm_option_get_dbpath(h.ptr))
 }
 
 // Get the last pm_error
 func LastError() os.Error {
-	return os.NewError(C.GoString(C.alpm_strerrorlast()))
+	return nil
 }
 
-func GetLocalDb() *[0]uint8 {
-	return C.alpm_option_get_localdb()
+func (h Handle) GetLocalDb() *[0]uint8 {
+	return C.alpm_option_get_localdb(h.ptr)
 }
 
 // Helper functions
 func Version() string {
 	return C.GoString(C.alpm_version())
-}
-// private test functions
-func prints(prefix string, s *_Ctype_char) {
-	fmt.Printf("%v = %v\n", prefix, C.GoString(s))
-}
-
-func printT(i interface{}) {
-	fmt.Printf("%T = %v\n", i, i)
-}
-
-func test() os.Error {
-	db := GetLocalDb()
-	searchlist := GetPkgCache(db)
-	for i := searchlist.Next(); i.Alpm_list_t != nil; i = i.Next() {
-		pkg := &Package{i.GetData()}
-		fmt.Printf("%v \n", pkg.GetName())
-	}
-	return nil
 }

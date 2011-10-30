@@ -5,8 +5,8 @@ package alpm
 */
 import "C"
 
-func RegisterSyncDb(s string) *[0]uint8 {
-	return C.alpm_db_register_sync(C.CString(s))
+func (h Handle) RegisterSyncDb(s string, siglevel uint32) *[0]uint8 {
+	return C.alpm_db_register_sync(h.ptr, C.CString(s), C.alpm_siglevel_t(siglevel))
 }
 
 func GetPkgCache(p *[0]uint8) *AlpmList {
