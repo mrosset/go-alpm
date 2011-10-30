@@ -56,10 +56,6 @@ func (h Handle) LastError() os.Error {
 	return nil
 }
 
-func (h Handle) GetLocalDb() *[0]uint8 {
-	return C.alpm_option_get_localdb(h.ptr)
-}
-
 // Helper functions
 func Version() string {
 	return C.GoString(C.alpm_version())

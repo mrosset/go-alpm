@@ -35,8 +35,8 @@ func TestLocalDB(t *testing.T) {
 			t.Errorf("local db failed")
 		}
 	}()
-	db := h.GetLocalDb()
-	searchlist := GetPkgCache(db)
+	db, _ := h.GetLocalDb()
+	searchlist := db.GetPkgCache()
 	for i := searchlist.Next(); i.Alpm_list_t != nil; i = i.Next() {
 		pkg := &Package{i.GetData()}
 		fmt.Printf("%v \n", pkg.GetName())

@@ -5,10 +5,38 @@ package alpm
 */
 import "C"
 
-func (h Handle) RegisterSyncDb(s string, siglevel uint32) *[0]uint8 {
-	return C.alpm_db_register_sync(h.ptr, C.CString(s), C.alpm_siglevel_t(siglevel))
+import (
+	"os"
+	"unsafe"
+)
+
+// Opaque structure representing a alpm database.
+type Db struct {
+	ptr *C.alpm_db_t
 }
 
-func GetPkgCache(p *[0]uint8) *AlpmList {
-	return &AlpmList{C.alpm_db_get_pkgcache(p)}
+// Returns the local database relative to the given handle.
+func (h Handle) GetLocalDb() (*Db, os.Error) {
+	db := C.alpm_option_get_localdb(h.ptr)
+	if db == nil {
+		return nil, h.LastError()
+	}
+	return &Db{db}, nil
+}
+
+// Loads a sync database with given name and signature check level.
+func (h Handle) RegisterSyncDb(dbname string, siglevel uint32) (*Db, os.Error) {
+	c_name := C.CString(dbname)
+	defer C.free(unsafe.Pointer(c_name))
+
+	db := C.alpm_db_register_sync(h.ptr, c_name, C.alpm_siglevel_t(siglevel))
+	if db == nil {
+		return nil, h.LastError()
+	}
+	return &Db{db}, nil
+}
+
+// Returns the list of packages of the database
+func (db Db) GetPkgCache() *AlpmList {
+	return &AlpmList{C.alpm_db_get_pkgcache(db.ptr)}
 }
