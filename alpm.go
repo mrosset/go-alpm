@@ -48,7 +48,11 @@ func (h Handle) GetDbPath() string {
 }
 
 // Get the last pm_error
-func LastError() os.Error {
+func (h Handle) LastError() os.Error {
+	c_err := C.alpm_errno(h.ptr)
+	if c_err != 0 {
+		return Error(c_err)
+	}
 	return nil
 }
 
