@@ -36,23 +36,6 @@ func Release() os.Error {
 
 // DB 
 
-// Options
-func SetRoot(s string) os.Error {
-	cs := C.CString(s)
-	if C.alpm_option_set_root(cs) != 0 {
-		return LastError()
-	}
-	return nil
-}
-
-func SetDbPath(s string) os.Error {
-	cs := C.CString(s)
-	if C.alpm_option_set_dbpath(cs) != 0 {
-		return LastError()
-	}
-	return nil
-}
-
 func GetRoot() string {
 	return C.GoString(C.alpm_option_get_root())
 }
@@ -74,17 +57,6 @@ func GetLocalDb() *[0]uint8 {
 func Version() string {
 	return C.GoString(C.alpm_version())
 }
-
-func SetOptions() (err os.Error) {
-	if err = SetRoot("/"); err != nil {
-		return err
-	}
-	if err = SetDbPath("/var/lib/pacman"); err != nil {
-		return err
-	}
-	return
-}
-
 // private test functions
 func prints(prefix string, s *_Ctype_char) {
 	fmt.Printf("%v = %v\n", prefix, C.GoString(s))

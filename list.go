@@ -33,10 +33,6 @@ func (v *AlpmList) Join(other *C.alpm_list_t) {
 }
 
 /* accessors */
-func (v *AlpmList) First() *AlpmList {
-	return &AlpmList{C.alpm_list_first(v.Alpm_list_t)}
-}
-
 func (v *AlpmList) Nth(n uint) *AlpmList {
 	st := C.size_t(n)
 	return &AlpmList{C.alpm_list_nth(v.Alpm_list_t, st)}
