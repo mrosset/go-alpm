@@ -37,6 +37,15 @@ func (h Handle) RegisterSyncDb(dbname string, siglevel uint32) (*Db, os.Error) {
 }
 
 // Returns the list of packages of the database
-func (db Db) GetPkgCache() *AlpmList {
-	return &AlpmList{C.alpm_db_get_pkgcache(db.ptr)}
+func (db Db) GetPkgCache() <-chan *Package {
+	pkgcache := &AlpmList{C.alpm_db_get_pkgcache(db.ptr)}
+	output := make(chan *Package)
+	go func() {
+		defer close(output)
+		for i := pkgcache; i.Alpm_list_t != nil; i = i.Next() {
+			pkg := &Package{i.GetData()}
+			output <- pkg
+		}
+	}()
+	return output
 }

@@ -1,6 +1,6 @@
 include $(GOROOT)/src/Make.inc
 
-TARG=alpm
+TARG=github.com/remyoudompheng/go-alpm
 CGOFILES=alpm.go\
 	 error.go\
 	 list.go\
@@ -18,4 +18,4 @@ examples:
 	gomake -C examples
 
 format:
-	gofmt -l -w *.go
+	gofmt -l -s -w *.go

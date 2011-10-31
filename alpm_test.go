@@ -39,7 +39,7 @@ func TestLocalDB(t *testing.T) {
 	searchlist := db.GetPkgCache()
 	for i := searchlist.Next(); i.Alpm_list_t != nil; i = i.Next() {
 		pkg := &Package{i.GetData()}
-		fmt.Printf("%v \n", pkg.GetName())
+		fmt.Printf("%v \n", pkg.Name())
 	}
 }
 

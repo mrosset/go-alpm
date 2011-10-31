@@ -6,9 +6,25 @@ package alpm
 import "C"
 
 type Package struct {
-	Pmpkg *[0]uint8
+	pmpkg *C.alpm_pkg_t
 }
 
-func (v *Package) GetName() string {
-	return C.GoString(C.alpm_pkg_get_name(v.Pmpkg))
+func (v *Package) Name() string {
+	return C.GoString(C.alpm_pkg_get_name(v.pmpkg))
+}
+
+func (v *Package) Version() string {
+	return C.GoString(C.alpm_pkg_get_version(v.pmpkg))
+}
+
+func (v *Package) Description() string {
+	return C.GoString(C.alpm_pkg_get_desc(v.pmpkg))
+}
+
+func (v *Package) URL() string {
+	return C.GoString(C.alpm_pkg_get_url(v.pmpkg))
+}
+
+func (v *Package) Packager() string {
+	return C.GoString(C.alpm_pkg_get_packager(v.pmpkg))
 }
