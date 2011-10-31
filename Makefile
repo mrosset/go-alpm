@@ -7,7 +7,12 @@ CGOFILES=alpm.go\
 	 db.go\
 	 package.go
 
+GOFILES=defs.go
+
 include $(GOROOT)/src/Make.pkg
+
+defs.go: defs.c
+	godefs -g alpm $< | sed s/ALPM_// | gofmt > $@
 
 examples:
 	gomake -C examples
