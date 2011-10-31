@@ -7,6 +7,7 @@ import "C"
 
 import (
 	"os"
+	"fmt"
 	"unsafe"
 )
 
@@ -34,6 +35,22 @@ func (h Handle) RegisterSyncDb(dbname string, siglevel uint32) (*Db, os.Error) {
 		return nil, h.LastError()
 	}
 	return &Db{db}, nil
+}
+
+func (db Db) Name() string {
+	return C.GoString(C.alpm_db_get_name(db.ptr))
+}
+
+func (db Db) GetPkg(name string) (*Package, os.Error) {
+	c_name := C.CString(name)
+	defer C.free(unsafe.Pointer(c_name))
+	ptr := C.alpm_db_get_pkg(db.ptr, c_name)
+	if ptr == nil {
+		return nil,
+			fmt.Errorf("Error when retrieving %s from database %s, see Handle.LastError()",
+				name, db.Name())
+	}
+	return &Package{ptr}, nil
 }
 
 // Returns the list of packages of the database
