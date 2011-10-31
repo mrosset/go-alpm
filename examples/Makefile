@@ -1,19 +1,19 @@
 include $(GOROOT)/src/Make.inc
 
-all: installed search
+PROG?=installed
 
-installed: installed.go
-	$(GC) installed.go
-	$(LD) -o $@ installed.$(O)
+DEPS=..
 
-search: search.go
-	$(GC) search.go
-	$(LD) -o $@ search.$(O)
+TARG=alpm-$(PROG)
 
-clean:
-	rm -f -r *.8 *.6 *.o */*.8 */*.6 */*.o */_obj installed search
+GOFILES=$(PROG).go
+
+include $(GOROOT)/src/Make.cmd
+
+examples:
+	$(MAKE) PROG=installed
+	$(MAKE) PROG=search
 
 format:
-	gofmt -l -s -w -tabindent -tabwidth=4 *.go
+	gofmt -l -s -w *.go
 
-test: all

@@ -1,20 +1,23 @@
 package main
 
-import alpm "github.com/str1ngs/go-alpm"
+import alpm "github.com/remyoudompheng/go-alpm"
+
 import "fmt"
 
 func main() {
-	alpm.Init()
-	defer alpm.Release()
-	alpm.SetRoot("/")
-	alpm.SetDbPath("/var/lib/pacman")
-	db := alpm.RegisterSyncDb("core")
-	alpm.RegisterSyncDb("community")
-	alpm.RegisterSyncDb("extra")
-	searchlist := alpm.GetPkgCache(db)
-	for i := uint(0); i < searchlist.Count(); i++ {
-		list := searchlist.Nth(i)
-		pkg := &alpm.Package{list.GetData()}
-		fmt.Printf("%s\n", pkg.GetName())
+	h, er := alpm.Init("/", "/var/lib/pacman")
+	if er != nil {
+		fmt.Println(er)
+		return
+	}
+	defer h.Release()
+
+	db, _ := h.RegisterSyncDb("core", 0)
+	h.RegisterSyncDb("community", 0)
+	h.RegisterSyncDb("extra", 0)
+
+	for pkg := range db.GetPkgCache() {
+		fmt.Printf("%s %s\n  %s\n",
+			pkg.Name(), pkg.Version(), pkg.Description())
 	}
 }

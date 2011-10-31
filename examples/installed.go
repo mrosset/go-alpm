@@ -1,37 +1,29 @@
 package main
 
-import alpm "github.com/str1ngs/go-alpm"
+import alpm "github.com/remyoudompheng/go-alpm"
 
 import "os"
 import "fmt"
 
 func main() {
 
-	if alpm.Init() != nil {
+	h, er := alpm.Init("/", "/var/lib/pacman")
+	if er != nil {
+		print(er, "\n")
 		os.Exit(1)
 	}
 
-	if alpm.SetRoot("/") != nil {
-		alpm.Release()
+	db, er := h.GetLocalDb()
+	if er != nil {
+		fmt.Println(er)
 		os.Exit(1)
 	}
 
-	if alpm.SetDbPath("/var/lib/pacman") != nil {
-		alpm.Release()
-		os.Exit(1)
+	for pkg := range db.GetPkgCache() {
+		fmt.Printf("%s %s\n", pkg.Name(), pkg.Version())
 	}
 
-	db := alpm.GetLocalDB()
-	searchlist := alpm.GetPkgCache(db)
-
-	for i := uint(0); i < searchlist.Count(); i++ {
-		list := searchlist.Nth(i)
-		pkg := &alpm.Package{list.GetData()}
-		name := pkg.GetName()
-		fmt.Printf("%v \n", name)
-	}
-
-	if alpm.Release() != nil {
+	if h.Release() != nil {
 		os.Exit(1)
 	}
 
