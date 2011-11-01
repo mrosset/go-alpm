@@ -4,7 +4,7 @@ package alpm
 import "C"
 
 import (
- "os"
+	"os"
 )
 
 func (h Handle) GetUseSyslog() bool {

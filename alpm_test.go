@@ -44,6 +44,15 @@ func TestVercmp(t *testing.T) {
 	}
 }
 
+func TestRevdeps(t *testing.T) {
+	fmt.Print("Testing reverse deps of glibc...\n")
+	db, _ := h.GetLocalDb()
+	pkg, _ := db.GetPkg("glibc")
+	for _, pkgname := range pkg.ComputeRequiredBy() {
+		fmt.Println(pkgname)
+	}
+}
+
 func TestLocalDB(t *testing.T) {
 	defer func() {
 		if recover() != nil {
@@ -51,10 +60,16 @@ func TestLocalDB(t *testing.T) {
 		}
 	}()
 	db, _ := h.GetLocalDb()
-	searchlist := db.GetPkgCache()
-	for i := searchlist.Next(); i.Alpm_list_t != nil; i = i.Next() {
-		pkg := &Package{i.GetData()}
-		fmt.Printf("%v \n", pkg.Name())
+	fmt.Print("Testing listing local db...\n")
+	number := 0
+	for pkg := range db.GetPkgCache() {
+		number++
+		if number <= 15 {
+			fmt.Printf("%v \n", pkg.Name())
+		}
+	}
+	if number > 15 {
+		fmt.Printf("%d more packages...\n", number-15)
 	}
 }
 
