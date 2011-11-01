@@ -29,6 +29,21 @@ func TestVersion(t *testing.T) {
 	}
 }
 
+func TestVercmp(t *testing.T) {
+	x := VerCmp("1.0-2", "2.0-1")
+	if x >= 0 {
+		t.Error("failed at checking 2.0-1 is newer than 1.0-2")
+	}
+	x = VerCmp("1:1.0-2", "2.0-1")
+	if x <= 0 {
+		t.Error("failed at checking 2.0-1 is older than 1.0-2")
+	}
+	x = VerCmp("2.0.2-2", "2.0.2-2")
+	if x != 0 {
+		t.Error("failed at checking 2.0.2-2 is equal to itself")
+	}
+}
+
 func TestLocalDB(t *testing.T) {
 	defer func() {
 		if recover() != nil {
