@@ -2,6 +2,7 @@ include $(GOROOT)/src/Make.inc
 
 TARG=github.com/remyoudompheng/go-alpm
 CGOFILES=alpm.go\
+	 options.go\
 	 error.go\
 	 list.go\
 	 db.go\
