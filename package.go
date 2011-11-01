@@ -13,24 +13,24 @@ type Package struct {
 	pmpkg *C.alpm_pkg_t
 }
 
-func (v *Package) Name() string {
-	return C.GoString(C.alpm_pkg_get_name(v.pmpkg))
+func (pkg Package) Name() string {
+	return C.GoString(C.alpm_pkg_get_name(pkg.pmpkg))
 }
 
-func (v *Package) Version() string {
-	return C.GoString(C.alpm_pkg_get_version(v.pmpkg))
+func (pkg Package) Version() string {
+	return C.GoString(C.alpm_pkg_get_version(pkg.pmpkg))
 }
 
-func (v *Package) Description() string {
-	return C.GoString(C.alpm_pkg_get_desc(v.pmpkg))
+func (pkg Package) Description() string {
+	return C.GoString(C.alpm_pkg_get_desc(pkg.pmpkg))
 }
 
-func (v *Package) URL() string {
-	return C.GoString(C.alpm_pkg_get_url(v.pmpkg))
+func (pkg Package) URL() string {
+	return C.GoString(C.alpm_pkg_get_url(pkg.pmpkg))
 }
 
-func (v *Package) Packager() string {
-	return C.GoString(C.alpm_pkg_get_packager(v.pmpkg))
+func (pkg Package) Packager() string {
+	return C.GoString(C.alpm_pkg_get_packager(pkg.pmpkg))
 }
 
 // Returns the names of reverse dependencies of a package
