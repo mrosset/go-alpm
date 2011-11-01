@@ -55,12 +55,12 @@ func (db Db) GetPkg(name string) (*Package, os.Error) {
 
 // Returns the list of packages of the database
 func (db Db) GetPkgCache() <-chan *Package {
-	pkgcache := &AlpmList{C.alpm_db_get_pkgcache(db.ptr)}
+	pkgcache := (*list)(unsafe.Pointer(C.alpm_db_get_pkgcache(db.ptr)))
 	output := make(chan *Package)
 	go func() {
 		defer close(output)
-		for i := pkgcache; i.Alpm_list_t != nil; i = i.Next() {
-			pkg := &Package{i.GetData()}
+		for i := pkgcache; i != nil; i = i.Next {
+			pkg := &Package{(*C.alpm_pkg_t)(unsafe.Pointer(i.Data))}
 			output <- pkg
 		}
 	}()

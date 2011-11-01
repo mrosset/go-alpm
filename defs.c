@@ -80,4 +80,12 @@ typedef enum _alpm_sigvalidity_t {
 	$ALPM_SIGVALIDITY_UNKNOWN
 } alpm_sigvalidity_t;
 
+typedef struct __alpm_list_t {
+  /** data held by the list node */
+  void *data;
+  /** pointer to the previous node */
+  struct __alpm_list_t *prev;
+  /** pointer to the next node */
+  struct __alpm_list_t *next;
+} $list;
 
