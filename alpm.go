@@ -4,17 +4,14 @@ package alpm
 // #include <alpm.h>
 import "C"
 
-import (
-	"os"
-	"unsafe"
-)
+import "unsafe"
 
 type Handle struct {
 	ptr *C.alpm_handle_t
 }
 
 // Initialize
-func Init(root, dbpath string) (*Handle, os.Error) {
+func Init(root, dbpath string) (*Handle, error) {
 	c_root := C.CString(root)
 	defer C.free(unsafe.Pointer(c_root))
 	c_dbpath := C.CString(dbpath)
@@ -29,7 +26,7 @@ func Init(root, dbpath string) (*Handle, os.Error) {
 	return &Handle{h}, nil
 }
 
-func (h *Handle) Release() os.Error {
+func (h *Handle) Release() error {
 	if er := C.alpm_release(h.ptr); er != 0 {
 		return Error(er)
 	}
@@ -48,7 +45,7 @@ func (h Handle) GetDbPath() string {
 }
 
 // Get the last pm_error
-func (h Handle) LastError() os.Error {
+func (h Handle) LastError() error {
 	if h.ptr != nil {
 		c_err := C.alpm_errno(h.ptr)
 		if c_err != 0 {

@@ -3,7 +3,6 @@ package alpm
 import (
 	"bytes"
 	"fmt"
-	"os"
 	"template"
 	"testing"
 	"time"
@@ -45,7 +44,7 @@ func (p PrettyPackage) PrettyInstallDate() string {
 }
 
 func init() {
-	var er os.Error
+	var er error
 	pkginfo_tpl, er = template.New("info").Parse(pkginfo_template)
 	if er != nil {
 		fmt.Printf("couldn't compile template: %s\n", er)

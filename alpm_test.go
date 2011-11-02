@@ -15,7 +15,7 @@ const (
 var h *Handle
 
 func init() {
-	var err os.Error
+	var err error
 	h, err = Init("/", "/var/lib/pacman")
 	if err != nil {
 		fmt.Printf("failed to Init(): %s", err)
