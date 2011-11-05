@@ -12,23 +12,21 @@ const (
 type PkgFrom uint
 
 const (
-	_           PkgFrom = iota
-	FromFile    PkgFrom = iota
-	FromLocalDB PkgFrom = iota
-	FromSyncDB  PkgFrom = iota
+	FromFile PkgFrom = iota + 1
+	FromLocalDB
+	FromSyncDB
 )
 
 // Dependency constraint types.
 type DepMod uint
 
 const (
-	_         DepMod = iota
-	DepModAny DepMod = iota // Any version.
-	DepModEq  DepMod = iota // Specific version.
-	DepModGE  DepMod = iota // Test for >= some version.
-	DepModLE  DepMod = iota // Test for <= some version.
-	DepModGT  DepMod = iota // Test for > some version.
-	DepModLT  DepMod = iota // Test for < some version.
+	DepModAny DepMod = iota + 1 // Any version.
+	DepModEq                    // Specific version.
+	DepModGE                    // Test for >= some version.
+	DepModLE                    // Test for <= some version.
+	DepModGT                    // Test for > some version.
+	DepModLT                    // Test for < some version.
 )
 
 func (mod DepMod) String() string {
@@ -51,15 +49,26 @@ func (mod DepMod) String() string {
 type SigLevel uint
 
 const (
-	SigPackage           SigLevel = 1 << 0
-	SigPackageOptional   SigLevel = 1 << 1
-	SigPackageMarginalOk SigLevel = 1 << 2
-	SigPackageUnknownOk  SigLevel = 1 << 3
+	SigPackage SigLevel = 1 << iota
+	SigPackageOptional
+	SigPackageMarginalOk
+	SigPackageUnknownOk
+)
+const (
+	SigDatabase SigLevel = 1 << (10 + iota)
+	SigDatabaseOptional
+	SigDatabaseMarginalOk
+	SigDatabaseUnknownOk
+)
+const SigUseDefault SigLevel = 1 << 31
 
-	SigDatabase           SigLevel = 1 << 10
-	SigDatabaseOptional   SigLevel = 1 << 11
-	SigDatabaseMarginalOk SigLevel = 1 << 12
-	SigDatabaseUnknownOk  SigLevel = 1 << 13
+// Signature status
+type SigStatus uint
 
-	SigUseDefault = 1 << 31
+const (
+	SigStatusValid SigStatus = iota
+	SigStatusKeyExpired
+	SigStatusSigExpired
+	SigStatusKeyUnknown
+	SigStatusKeyDisabled
 )
