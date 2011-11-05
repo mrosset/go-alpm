@@ -6,9 +6,11 @@ CGOFILES=alpm.go\
 	 error.go\
 	 list.go\
 	 db.go\
-	 package.go
+	 package.go\
+	 types.go
 
-GOFILES=defs.go
+GOFILES=defs.go\
+	enums.go
 
 include $(GOROOT)/src/Make.pkg
 

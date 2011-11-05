@@ -14,6 +14,10 @@ Name         : {{ .Name }}
 Version      : {{ .Version }}
 Description  : {{ .Description }}
 URL          : {{ .URL }}
+Dependencies : {{ range .Depends }}{{ . }} {{ end }}
+Provides     : {{ range .Provides }}{{ . }} {{ end }}
+Replaces     : {{ range .Replaces }}{{ . }} {{ end }}
+Conflicts    : {{ range .Conflicts }}{{ . }} {{ end }}
 Packager     : {{ .Packager }}
 Build Date   : {{ .PrettyBuildDate }}
 Install Date : {{ .PrettyInstallDate }}
@@ -62,8 +66,16 @@ func TestPkginfo(t *testing.T) {
 
 	t.Log("Printing package information for pacman")
 	db, _ := h.GetLocalDb()
+
 	pkg, _ := db.GetPkg("pacman")
 	buf := bytes.NewBuffer(nil)
 	pkginfo_tpl.Execute(buf, PrettyPackage{*pkg})
 	t.Logf("%s", buf.Bytes())
+
+	pkg, _ = db.GetPkg("linux")
+	if pkg != nil {
+		buf = bytes.NewBuffer(nil)
+		pkginfo_tpl.Execute(buf, PrettyPackage{*pkg})
+		t.Logf("%s", buf.Bytes())
+	}
 }
