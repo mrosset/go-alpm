@@ -81,6 +81,11 @@ func iterateDepends(l *C.alpm_list_t) <-chan Depend {
 	return out
 }
 
+func (pkg Package) Files() []File {
+	c_files := C.alpm_pkg_get_files(pkg.pmpkg)
+	return convertFilelist(c_files)
+}
+
 func (pkg Package) Depends() <-chan Depend {
 	c_depends := C.alpm_pkg_get_depends(pkg.pmpkg)
 	return iterateDepends(c_depends)

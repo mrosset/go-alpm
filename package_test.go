@@ -27,6 +27,8 @@ MD5 Sum      : {{ .MD5Sum }}
 SHA256 Sum   : {{ .SHA256Sum }}
 
 Required By  : {{ .ComputeRequiredBy }}
+Files        : {{ range .Files }}
+               {{ .Name }} {{ .Size }}{{ end }}
 `
 
 var pkginfo_tpl *template.Template
@@ -70,12 +72,12 @@ func TestPkginfo(t *testing.T) {
 	pkg, _ := db.GetPkg("pacman")
 	buf := bytes.NewBuffer(nil)
 	pkginfo_tpl.Execute(buf, PrettyPackage{*pkg})
-	t.Logf("%s", buf.Bytes())
+	t.Logf("%s...", buf.Bytes()[:1024])
 
 	pkg, _ = db.GetPkg("linux")
 	if pkg != nil {
 		buf = bytes.NewBuffer(nil)
 		pkginfo_tpl.Execute(buf, PrettyPackage{*pkg})
-		t.Logf("%s", buf.Bytes())
+		t.Logf("%s...", buf.Bytes()[:1024])
 	}
 }
