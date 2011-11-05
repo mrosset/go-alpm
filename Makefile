@@ -4,7 +4,6 @@ TARG=github.com/remyoudompheng/go-alpm
 CGOFILES=alpm.go\
 	 handle.go\
 	 error.go\
-	 list.go\
 	 db.go\
 	 package.go\
 	 types.go
