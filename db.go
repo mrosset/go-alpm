@@ -25,7 +25,7 @@ func (h Handle) GetLocalDb() (*Db, error) {
 }
 
 // Loads a sync database with given name and signature check level.
-func (h Handle) RegisterSyncDb(dbname string, siglevel uint32) (*Db, error) {
+func (h Handle) RegisterSyncDb(dbname string, siglevel SigLevel) (*Db, error) {
 	c_name := C.CString(dbname)
 	defer C.free(unsafe.Pointer(c_name))
 
