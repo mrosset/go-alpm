@@ -74,7 +74,7 @@ func iterateDepends(l *C.alpm_list_t) <-chan Depend {
 	go func() {
 		defer close(out)
 		for i := (*list)(unsafe.Pointer(l)); i != nil; i = i.Next {
-			item := (*depend)(unsafe.Pointer(i.Data))
+			item := (*C.alpm_depend_t)(unsafe.Pointer(i.Data))
 			out <- convertDepend(*item)
 		}
 	}()
