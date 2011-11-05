@@ -4,7 +4,7 @@ package alpm
 import "C"
 
 import (
-  "unsafe"
+	"unsafe"
 )
 
 type Handle struct {

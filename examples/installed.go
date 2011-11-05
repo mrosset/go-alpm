@@ -13,13 +13,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	db, er := h.GetLocalDb()
+	db, er := h.LocalDb()
 	if er != nil {
 		fmt.Println(er)
 		os.Exit(1)
 	}
 
-	for pkg := range db.GetPkgCache() {
+	for pkg := range db.PkgCache() {
 		fmt.Printf("%s %s\n", pkg.Name(), pkg.Version())
 	}
 

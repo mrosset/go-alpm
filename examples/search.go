@@ -16,7 +16,7 @@ func main() {
 	h.RegisterSyncDb("community", 0)
 	h.RegisterSyncDb("extra", 0)
 
-	for pkg := range db.GetPkgCache() {
+	for pkg := range db.PkgCache() {
 		fmt.Printf("%s %s\n  %s\n",
 			pkg.Name(), pkg.Version(), pkg.Description())
 	}

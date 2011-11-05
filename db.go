@@ -16,7 +16,7 @@ type Db struct {
 }
 
 // Returns the local database relative to the given handle.
-func (h Handle) GetLocalDb() (*Db, error) {
+func (h Handle) LocalDb() (*Db, error) {
 	db := C.alpm_option_get_localdb(h.ptr)
 	if db == nil {
 		return nil, h.LastError()
@@ -53,7 +53,7 @@ func (db Db) GetPkg(name string) (*Package, error) {
 }
 
 // Returns the list of packages of the database
-func (db Db) GetPkgCache() <-chan *Package {
+func (db Db) PkgCache() <-chan *Package {
 	pkgcache := (*list)(unsafe.Pointer(C.alpm_db_get_pkgcache(db.ptr)))
 	output := make(chan *Package)
 	go func() {
