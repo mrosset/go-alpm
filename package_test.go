@@ -3,7 +3,6 @@ package alpm
 import (
 	"bytes"
 	"fmt"
-	"os"
 	"template"
 	"testing"
 	"time"
@@ -15,6 +14,10 @@ Name         : {{ .Name }}
 Version      : {{ .Version }}
 Description  : {{ .Description }}
 URL          : {{ .URL }}
+Dependencies : {{ range .Depends }}{{ . }} {{ end }}
+Provides     : {{ range .Provides }}{{ . }} {{ end }}
+Replaces     : {{ range .Replaces }}{{ . }} {{ end }}
+Conflicts    : {{ range .Conflicts }}{{ . }} {{ end }}
 Packager     : {{ .Packager }}
 Build Date   : {{ .PrettyBuildDate }}
 Install Date : {{ .PrettyInstallDate }}
@@ -24,6 +27,8 @@ MD5 Sum      : {{ .MD5Sum }}
 SHA256 Sum   : {{ .SHA256Sum }}
 
 Required By  : {{ .ComputeRequiredBy }}
+Files        : {{ range .Files }}
+               {{ .Name }} {{ .Size }}{{ end }}
 `
 
 var pkginfo_tpl *template.Template
@@ -45,7 +50,7 @@ func (p PrettyPackage) PrettyInstallDate() string {
 }
 
 func init() {
-	var er os.Error
+	var er error
 	pkginfo_tpl, er = template.New("info").Parse(pkginfo_template)
 	if er != nil {
 		fmt.Printf("couldn't compile template: %s\n", er)
@@ -62,9 +67,17 @@ func TestPkginfo(t *testing.T) {
 	}
 
 	t.Log("Printing package information for pacman")
-	db, _ := h.GetLocalDb()
+	db, _ := h.LocalDb()
+
 	pkg, _ := db.GetPkg("pacman")
 	buf := bytes.NewBuffer(nil)
 	pkginfo_tpl.Execute(buf, PrettyPackage{*pkg})
-	t.Logf("%s", buf.Bytes())
+	t.Logf("%s...", buf.Bytes()[:1024])
+
+	pkg, _ = db.GetPkg("linux")
+	if pkg != nil {
+		buf = bytes.NewBuffer(nil)
+		pkginfo_tpl.Execute(buf, PrettyPackage{*pkg})
+		t.Logf("%s...", buf.Bytes()[:1024])
+	}
 }

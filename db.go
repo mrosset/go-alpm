@@ -6,8 +6,8 @@ package alpm
 import "C"
 
 import (
-	"os"
 	"fmt"
+	"os"
 	"unsafe"
 )
 
@@ -17,7 +17,7 @@ type Db struct {
 }
 
 // Returns the local database relative to the given handle.
-func (h Handle) GetLocalDb() (*Db, os.Error) {
+func (h Handle) LocalDb() (*Db, os.Error) {
 	db := C.alpm_option_get_localdb(h.ptr)
 	if db == nil {
 		return nil, h.LastError()
@@ -26,7 +26,7 @@ func (h Handle) GetLocalDb() (*Db, os.Error) {
 }
 
 // Loads a sync database with given name and signature check level.
-func (h Handle) RegisterSyncDb(dbname string, siglevel uint32) (*Db, os.Error) {
+func (h Handle) RegisterSyncDb(dbname string, siglevel SigLevel) (*Db, os.Error) {
 	c_name := C.CString(dbname)
 	defer C.free(unsafe.Pointer(c_name))
 
@@ -54,7 +54,7 @@ func (db Db) GetPkg(name string) (*Package, os.Error) {
 }
 
 // Returns the list of packages of the database
-func (db Db) GetPkgCache() <-chan *Package {
+func (db Db) PkgCache() <-chan *Package {
 	pkgcache := (*list)(unsafe.Pointer(C.alpm_db_get_pkgcache(db.ptr)))
 	output := make(chan *Package)
 	go func() {

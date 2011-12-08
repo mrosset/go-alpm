@@ -15,7 +15,7 @@ const (
 var h *Handle
 
 func init() {
-	var err os.Error
+	var err error
 	h, err = Init("/", "/var/lib/pacman")
 	if err != nil {
 		fmt.Printf("failed to Init(): %s", err)
@@ -46,7 +46,7 @@ func TestVercmp(t *testing.T) {
 
 func TestRevdeps(t *testing.T) {
 	fmt.Print("Testing reverse deps of glibc...\n")
-	db, _ := h.GetLocalDb()
+	db, _ := h.LocalDb()
 	pkg, _ := db.GetPkg("glibc")
 	for _, pkgname := range pkg.ComputeRequiredBy() {
 		fmt.Println(pkgname)
@@ -59,10 +59,10 @@ func TestLocalDB(t *testing.T) {
 			t.Errorf("local db failed")
 		}
 	}()
-	db, _ := h.GetLocalDb()
+	db, _ := h.LocalDb()
 	fmt.Print("Testing listing local db...\n")
 	number := 0
-	for pkg := range db.GetPkgCache() {
+	for pkg := range db.PkgCache() {
 		number++
 		if number <= 15 {
 			fmt.Printf("%v \n", pkg.Name())

@@ -69,6 +69,43 @@ func (pkg Package) DB() *Db {
 	return &Db{ptr}
 }
 
+func iterateDepends(l *C.alpm_list_t) <-chan Depend {
+	out := make(chan Depend)
+	go func() {
+		defer close(out)
+		for i := (*list)(unsafe.Pointer(l)); i != nil; i = i.Next {
+			item := (*C.alpm_depend_t)(unsafe.Pointer(i.Data))
+			out <- convertDepend(*item)
+		}
+	}()
+	return out
+}
+
+func (pkg Package) Files() []File {
+	c_files := C.alpm_pkg_get_files(pkg.pmpkg)
+	return convertFilelist(c_files)
+}
+
+func (pkg Package) Depends() <-chan Depend {
+	c_depends := C.alpm_pkg_get_depends(pkg.pmpkg)
+	return iterateDepends(c_depends)
+}
+
+func (pkg Package) Conflicts() <-chan Depend {
+	c_depends := C.alpm_pkg_get_conflicts(pkg.pmpkg)
+	return iterateDepends(c_depends)
+}
+
+func (pkg Package) Provides() <-chan Depend {
+	c_depends := C.alpm_pkg_get_provides(pkg.pmpkg)
+	return iterateDepends(c_depends)
+}
+
+func (pkg Package) Replaces() <-chan Depend {
+	c_depends := C.alpm_pkg_get_replaces(pkg.pmpkg)
+	return iterateDepends(c_depends)
+}
+
 // Returns the names of reverse dependencies of a package
 func (pkg Package) ComputeRequiredBy() []string {
 	result := C.alpm_pkg_compute_requiredby(pkg.pmpkg)
