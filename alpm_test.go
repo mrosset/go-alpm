@@ -9,7 +9,7 @@ import (
 const (
 	root    = "/"
 	dbpath  = "/var/lib/pacman"
-	version = "7.0.0"
+	version = "7.0.1"
 )
 
 var h *Handle
@@ -25,7 +25,7 @@ func init() {
 
 func TestVersion(t *testing.T) {
 	if Version() != version {
-		t.Error("verion's do not match")
+		t.Error("version's do not match")
 	}
 }
 

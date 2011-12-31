@@ -3,8 +3,8 @@ package alpm
 import (
 	"bytes"
 	"fmt"
-	"template"
 	"testing"
+	"text/template"
 	"time"
 )
 
@@ -39,13 +39,13 @@ type PrettyPackage struct {
 
 func (p PrettyPackage) PrettyBuildDate() string {
 	date := p.BuildDate()
-	t := time.SecondsToLocalTime(date)
+	t := time.Unix(date, 0)
 	return t.Format(time.RFC1123)
 }
 
 func (p PrettyPackage) PrettyInstallDate() string {
 	date := p.InstallDate()
-	t := time.SecondsToLocalTime(date)
+	t := time.Unix(date, 0)
 	return t.Format(time.RFC1123)
 }
 
