@@ -62,7 +62,7 @@ func TestLocalDB(t *testing.T) {
 	db, _ := h.LocalDb()
 	fmt.Print("Testing listing local db...\n")
 	number := 0
-	for pkg := range db.PkgCache() {
+	for _, pkg := range db.PkgCache().Slice() {
 		number++
 		if number <= 15 {
 			fmt.Printf("%v \n", pkg.Name())

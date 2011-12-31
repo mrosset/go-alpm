@@ -19,7 +19,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	for pkg := range db.PkgCache() {
+	for _, pkg := range db.PkgCache().Slice() {
 		fmt.Printf("%s %s\n", pkg.Name(), pkg.Version())
 	}
 

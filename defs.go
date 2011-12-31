@@ -39,11 +39,3 @@ const (
 	SIGVALIDITY_NEVER        = 0x2
 	SIGVALIDITY_UNKNOWN      = 0x3
 )
-
-// Types
-
-type list struct {
-	Data *byte
-	Prev *list
-	Next *list
-}

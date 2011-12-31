@@ -14,10 +14,10 @@ Name         : {{ .Name }}
 Version      : {{ .Version }}
 Description  : {{ .Description }}
 URL          : {{ .URL }}
-Dependencies : {{ range .Depends }}{{ . }} {{ end }}
-Provides     : {{ range .Provides }}{{ . }} {{ end }}
-Replaces     : {{ range .Replaces }}{{ . }} {{ end }}
-Conflicts    : {{ range .Conflicts }}{{ . }} {{ end }}
+Dependencies : {{ range .Depends.Slice }}{{ . }} {{ end }}
+Provides     : {{ range .Provides.Slice }}{{ . }} {{ end }}
+Replaces     : {{ range .Replaces.Slice }}{{ . }} {{ end }}
+Conflicts    : {{ range .Conflicts.Slice }}{{ . }} {{ end }}
 Packager     : {{ .Packager }}
 Build Date   : {{ .PrettyBuildDate }}
 Install Date : {{ .PrettyInstallDate }}

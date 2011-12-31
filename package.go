@@ -13,6 +13,41 @@ type Package struct {
 	pmpkg *C.alpm_pkg_t
 }
 
+type PackageList struct{ *list }
+
+func (l PackageList) ForEach(f func(Package) error) error {
+	return l.forEach(func(p unsafe.Pointer) error {
+		return f(Package{(*C.alpm_pkg_t)(p)})
+	})
+}
+
+func (l PackageList) Slice() []Package {
+	slice := []Package{}
+	l.ForEach(func(p Package) error {
+		slice = append(slice, p)
+		return nil
+	})
+	return slice
+}
+
+type DependList struct{ *list }
+
+func (l DependList) ForEach(f func(Depend) error) error {
+	return l.forEach(func(p unsafe.Pointer) error {
+		dep := convertDepend((*C.alpm_depend_t)(p))
+		return f(dep)
+	})
+}
+
+func (l DependList) Slice() []Depend {
+	slice := []Depend{}
+	l.ForEach(func(dep Depend) error {
+		slice = append(slice, dep)
+		return nil
+	})
+	return slice
+}
+
 func (pkg Package) Name() string {
 	return C.GoString(C.alpm_pkg_get_name(pkg.pmpkg))
 }
@@ -69,41 +104,29 @@ func (pkg Package) DB() *Db {
 	return &Db{ptr}
 }
 
-func iterateDepends(l *C.alpm_list_t) <-chan Depend {
-	out := make(chan Depend)
-	go func() {
-		defer close(out)
-		for i := (*list)(unsafe.Pointer(l)); i != nil; i = i.Next {
-			item := (*C.alpm_depend_t)(unsafe.Pointer(i.Data))
-			out <- convertDepend(*item)
-		}
-	}()
-	return out
-}
-
 func (pkg Package) Files() []File {
 	c_files := C.alpm_pkg_get_files(pkg.pmpkg)
 	return convertFilelist(c_files)
 }
 
-func (pkg Package) Depends() <-chan Depend {
-	c_depends := C.alpm_pkg_get_depends(pkg.pmpkg)
-	return iterateDepends(c_depends)
+func (pkg Package) Depends() DependList {
+	ptr := unsafe.Pointer(C.alpm_pkg_get_depends(pkg.pmpkg))
+	return DependList{(*list)(ptr)}
 }
 
-func (pkg Package) Conflicts() <-chan Depend {
-	c_depends := C.alpm_pkg_get_conflicts(pkg.pmpkg)
-	return iterateDepends(c_depends)
+func (pkg Package) Conflicts() DependList {
+	ptr := unsafe.Pointer(C.alpm_pkg_get_conflicts(pkg.pmpkg))
+	return DependList{(*list)(ptr)}
 }
 
-func (pkg Package) Provides() <-chan Depend {
-	c_depends := C.alpm_pkg_get_provides(pkg.pmpkg)
-	return iterateDepends(c_depends)
+func (pkg Package) Provides() DependList {
+	ptr := unsafe.Pointer(C.alpm_pkg_get_provides(pkg.pmpkg))
+	return DependList{(*list)(ptr)}
 }
 
-func (pkg Package) Replaces() <-chan Depend {
-	c_depends := C.alpm_pkg_get_replaces(pkg.pmpkg)
-	return iterateDepends(c_depends)
+func (pkg Package) Replaces() DependList {
+	ptr := unsafe.Pointer(C.alpm_pkg_get_replaces(pkg.pmpkg))
+	return DependList{(*list)(ptr)}
 }
 
 // Returns the names of reverse dependencies of a package

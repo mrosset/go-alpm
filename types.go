@@ -16,7 +16,7 @@ type Depend struct {
 	Mod     DepMod
 }
 
-func convertDepend(dep C.alpm_depend_t) Depend {
+func convertDepend(dep *C.alpm_depend_t) Depend {
 	return Depend{
 		Name:    C.GoString(dep.name),
 		Version: C.GoString(dep.version),
@@ -52,4 +52,22 @@ func convertFilelist(files *C.alpm_filelist_t) []File {
 			Mode: uint32(c_files[i].mode)}
 	}
 	return items
+}
+
+// Internal alpm list structure.
+type list struct {
+	Data unsafe.Pointer
+	Prev *list
+	Next *list
+}
+
+// Iterates a function on a list and stop on error.
+func (l *list) forEach(f func(unsafe.Pointer) error) error {
+	for ; l != nil; l = l.Next {
+		err := f(l.Data)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
