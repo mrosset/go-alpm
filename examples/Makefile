@@ -1,19 +1,10 @@
-include $(GOROOT)/src/Make.inc
+all: alpm-installed alpm-search
 
-PROG?=installed
+alpm-installed: installed.go
+	go build -x -o $@ $<
 
-DEPS=..
+alpm-search: search.go
+	go build -x -o $@ $<
 
-TARG=alpm-$(PROG)
-
-GOFILES=$(PROG).go
-
-include $(GOROOT)/src/Make.cmd
-
-examples:
-	$(MAKE) PROG=installed
-	$(MAKE) PROG=search
-
-format:
-	gofmt -l -s -w *.go
-
+clean:
+	rm -f alpm-installed alpm-search
