@@ -10,14 +10,18 @@ import (
 )
 
 type Package struct {
-	pmpkg *C.alpm_pkg_t
+	pmpkg  *C.alpm_pkg_t
+	handle Handle
 }
 
-type PackageList struct{ *list }
+type PackageList struct {
+	*list
+	handle Handle
+}
 
 func (l PackageList) ForEach(f func(Package) error) error {
 	return l.forEach(func(p unsafe.Pointer) error {
-		return f(Package{(*C.alpm_pkg_t)(p)})
+		return f(Package{(*C.alpm_pkg_t)(p), l.handle})
 	})
 }
 
@@ -101,7 +105,7 @@ func (pkg Package) DB() *Db {
 	if ptr == nil {
 		return nil
 	}
-	return &Db{ptr}
+	return &Db{ptr, pkg.handle}
 }
 
 func (pkg Package) Files() []File {

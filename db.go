@@ -12,7 +12,28 @@ import (
 
 // Opaque structure representing a alpm database.
 type Db struct {
-	ptr *C.alpm_db_t
+	ptr    *C.alpm_db_t
+	handle Handle
+}
+
+type DbList struct {
+	*list
+	handle Handle
+}
+
+func (l DbList) ForEach(f func(Db) error) error {
+	return l.forEach(func(p unsafe.Pointer) error {
+		return f(Db{(*C.alpm_db_t)(p), l.handle})
+	})
+}
+
+func (l DbList) Slice() []Db {
+	slice := []Db{}
+	l.ForEach(func(db Db) error {
+		slice = append(slice, db)
+		return nil
+	})
+	return slice
 }
 
 // Returns the local database relative to the given handle.
@@ -21,7 +42,16 @@ func (h Handle) LocalDb() (*Db, error) {
 	if db == nil {
 		return nil, h.LastError()
 	}
-	return &Db{db}, nil
+	return &Db{db, h}, nil
+}
+
+func (h Handle) SyncDbs() (DbList, error) {
+	dblist := C.alpm_option_get_syncdbs(h.ptr)
+	if dblist == nil {
+		return DbList{nil, h}, h.LastError()
+	}
+	dblistPtr := unsafe.Pointer(dblist)
+	return DbList{(*list)(dblistPtr), h}, nil
 }
 
 // Loads a sync database with given name and signature check level.
@@ -33,7 +63,7 @@ func (h Handle) RegisterSyncDb(dbname string, siglevel SigLevel) (*Db, error) {
 	if db == nil {
 		return nil, h.LastError()
 	}
-	return &Db{db}, nil
+	return &Db{db, h}, nil
 }
 
 func (db Db) Name() string {
@@ -46,14 +76,14 @@ func (db Db) GetPkg(name string) (*Package, error) {
 	ptr := C.alpm_db_get_pkg(db.ptr, c_name)
 	if ptr == nil {
 		return nil,
-			fmt.Errorf("Error when retrieving %s from database %s, see Handle.LastError()",
-				name, db.Name())
+			fmt.Errorf("Error when retrieving %s from database %s: %s",
+				name, db.Name(), db.handle.LastError())
 	}
-	return &Package{ptr}, nil
+	return &Package{ptr, db.handle}, nil
 }
 
 // Returns the list of packages of the database
 func (db Db) PkgCache() PackageList {
 	pkgcache := (*list)(unsafe.Pointer(C.alpm_db_get_pkgcache(db.ptr)))
-  return PackageList {pkgcache}
+	return PackageList{pkgcache, db.handle}
 }
