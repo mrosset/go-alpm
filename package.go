@@ -60,6 +60,10 @@ func (pkg Package) Version() string {
 	return C.GoString(C.alpm_pkg_get_version(pkg.pmpkg))
 }
 
+func (pkg Package) Architecture() string {
+	return C.GoString(C.alpm_pkg_get_arch(pkg.pmpkg))
+}
+
 func (pkg Package) Description() string {
 	return C.GoString(C.alpm_pkg_get_desc(pkg.pmpkg))
 }
@@ -131,6 +135,21 @@ func (pkg Package) Provides() DependList {
 func (pkg Package) Replaces() DependList {
 	ptr := unsafe.Pointer(C.alpm_pkg_get_replaces(pkg.pmpkg))
 	return DependList{(*list)(ptr)}
+}
+
+func (pkg Package) Groups() StringList {
+	ptr := unsafe.Pointer(C.alpm_pkg_get_groups(pkg.pmpkg))
+	return StringList{(*list)(ptr)}
+}
+
+func (pkg Package) Licenses() StringList {
+	ptr := unsafe.Pointer(C.alpm_pkg_get_licenses(pkg.pmpkg))
+	return StringList{(*list)(ptr)}
+}
+
+func (pkg Package) Reason() PkgReason {
+	reason := C.alpm_pkg_get_reason(pkg.pmpkg)
+	return PkgReason(reason)
 }
 
 // Returns the names of reverse dependencies of a package

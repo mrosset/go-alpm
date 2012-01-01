@@ -12,8 +12,11 @@ import (
 const pkginfo_template = `
 Name         : {{ .Name }}
 Version      : {{ .Version }}
+Architecture : {{ .Architecture }}
 Description  : {{ .Description }}
 URL          : {{ .URL }}
+Groups       : {{ .Groups.Slice }}
+Licenses     : {{ .Licenses.Slice }}
 Dependencies : {{ range .Depends.Slice }}{{ . }} {{ end }}
 Provides     : {{ range .Provides.Slice }}{{ . }} {{ end }}
 Replaces     : {{ range .Replaces.Slice }}{{ . }} {{ end }}
@@ -25,6 +28,7 @@ Package Size : {{ .Size }} bytes
 Install Size : {{ .ISize }} bytes
 MD5 Sum      : {{ .MD5Sum }}
 SHA256 Sum   : {{ .SHA256Sum }}
+Reason       : {{ .Reason }}
 
 Required By  : {{ .ComputeRequiredBy }}
 Files        : {{ range .Files }}

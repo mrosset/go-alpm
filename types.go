@@ -71,3 +71,22 @@ func (l *list) forEach(f func(unsafe.Pointer) error) error {
 	}
 	return nil
 }
+
+type StringList struct {
+	*list
+}
+
+func (l StringList) ForEach(f func(string) error) error {
+	return l.forEach(func(p unsafe.Pointer) error {
+		return f(C.GoString((*C.char)(p)))
+	})
+}
+
+func (l StringList) Slice() []string {
+	slice := []string{}
+	l.ForEach(func(s string) error {
+		slice = append(slice, s)
+		return nil
+	})
+	return slice
+}

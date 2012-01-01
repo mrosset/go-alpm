@@ -8,6 +8,16 @@ const (
 	PkgReasonDepend   PkgReason = 1
 )
 
+func (r PkgReason) String() string {
+	switch r {
+	case PkgReasonExplicit:
+		return "Explicitly installed"
+	case PkgReasonDepend:
+		return "Installed as a dependency of another package"
+	}
+	return ""
+}
+
 // Source of a package structure.
 type PkgFrom uint
 
