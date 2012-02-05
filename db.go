@@ -70,6 +70,11 @@ func (db Db) Name() string {
 	return C.GoString(C.alpm_db_get_name(db.ptr))
 }
 
+func (db Db) Servers() []string {
+  ptr := unsafe.Pointer(C.alpm_db_get_servers(db.ptr))
+  return StringList{(*list)(ptr)}.Slice()
+}
+
 func (db Db) GetPkg(name string) (*Package, error) {
 	c_name := C.CString(name)
 	defer C.free(unsafe.Pointer(c_name))

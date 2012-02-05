@@ -1,3 +1,5 @@
+// +build ignore
+
 package main
 
 import alpm "github.com/remyoudompheng/go-alpm"
