@@ -1,3 +1,4 @@
+// go-alpm defines Go bindings for libalpm (ArchLinux package manager).
 package alpm
 
 // #cgo LDFLAGS: -lalpm
@@ -6,12 +7,12 @@ import "C"
 
 import "unsafe"
 
-// Helper functions
+// Version returns libalpm version string.
 func Version() string {
 	return C.GoString(C.alpm_version())
 }
 
-// Perform version comparison according to Pacman conventions.
+// VerCmp performs version comparison according to Pacman conventions.
 // Return value is <0 if and only if v1 is older than v2.
 func VerCmp(v1, v2 string) int {
 	c1 := C.CString(v1)
