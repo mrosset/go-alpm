@@ -6,6 +6,7 @@ package alpm
 import "C"
 
 import (
+	"time"
 	"unsafe"
 )
 
@@ -84,14 +85,14 @@ func (pkg Package) SHA256Sum() string {
 	return C.GoString(C.alpm_pkg_get_sha256sum(pkg.pmpkg))
 }
 
-func (pkg Package) BuildDate() int64 {
+func (pkg Package) BuildDate() time.Time {
 	t := C.alpm_pkg_get_builddate(pkg.pmpkg)
-	return int64(t)
+	return time.Unix(int64(t), 0)
 }
 
-func (pkg Package) InstallDate() int64 {
+func (pkg Package) InstallDate() time.Time {
 	t := C.alpm_pkg_get_installdate(pkg.pmpkg)
-	return int64(t)
+	return time.Unix(int64(t), 0)
 }
 
 func (pkg Package) Size() int64 {

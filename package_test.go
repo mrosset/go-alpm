@@ -42,15 +42,11 @@ type PrettyPackage struct {
 }
 
 func (p PrettyPackage) PrettyBuildDate() string {
-	date := p.BuildDate()
-	t := time.Unix(date, 0)
-	return t.Format(time.RFC1123)
+	return p.BuildDate().Format(time.RFC1123)
 }
 
 func (p PrettyPackage) PrettyInstallDate() string {
-	date := p.InstallDate()
-	t := time.Unix(date, 0)
-	return t.Format(time.RFC1123)
+	return p.InstallDate().Format(time.RFC1123)
 }
 
 func init() {
