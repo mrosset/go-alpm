@@ -95,6 +95,15 @@ func (db Db) Servers() []string {
 	return StringList{(*list)(ptr)}.Slice()
 }
 
+func (db Db) SetServers(servers []string) {
+	C.alpm_db_set_servers(db.ptr, nil)
+	for _, srv := range servers {
+		C_srv := C.CString(srv)
+		defer C.free(unsafe.Pointer(C_srv))
+		C.alpm_db_add_server(db.ptr, C_srv)
+	}
+}
+
 func (db Db) PkgByName(name string) (*Package, error) {
 	c_name := C.CString(name)
 	defer C.free(unsafe.Pointer(c_name))

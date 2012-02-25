@@ -8,6 +8,7 @@ import (
 	"os"
 	"reflect"
 	"strings"
+	"syscall"
 )
 
 // Parsing routines for pacman.conf format.
@@ -144,6 +145,7 @@ func (rdr *confReader) ParseLine() (tok iniToken, err error) {
 func ParseConfig(r io.Reader) (conf PacmanConfig, err error) {
 	rdr := newConfReader(r)
 	rdrStack := []confReader{rdr}
+	conf.SetDefaults()
 	confReflect := reflect.ValueOf(&conf).Elem()
 	var currentSection string
 	var curRepo *RepoConfig
@@ -223,4 +225,51 @@ lineloop:
 		}
 	}
 	panic("impossible")
+}
+
+func (conf *PacmanConfig) SetDefaults() {
+	conf.RootDir = "/"
+	conf.DBPath = "/var/lib/pacman"
+}
+
+func getArch() (string, error) {
+	var uname syscall.Utsname
+	err := syscall.Uname(&uname)
+	if err != nil {
+		return "", err
+	}
+	var arch [65]byte
+	for i, c := range uname.Machine {
+		if c == 0 {
+			return string(arch[:i]), nil
+		}
+		arch[i] = byte(c)
+	}
+	return string(arch[:]), nil
+}
+
+func (conf *PacmanConfig) CreateHandle() (*Handle, error) {
+	h, err := Init(conf.RootDir, conf.DBPath)
+	if err != nil {
+		return nil, err
+	}
+	if conf.Architecture == "auto" {
+		conf.Architecture, err = getArch()
+		if err != nil {
+			return nil, fmt.Errorf("architecture is 'auto' but couldn't uname()")
+		}
+	}
+	for _, repoconf := range conf.Repos {
+		// TODO: set SigLevel
+		db, err := h.RegisterSyncDb(repoconf.Name, 0)
+		if err == nil {
+			for i, addr := range repoconf.Servers {
+				addr = strings.Replace(addr, "$repo", repoconf.Name, -1)
+				addr = strings.Replace(addr, "$arch", conf.Architecture, -1)
+				repoconf.Servers[i] = addr
+			}
+			db.SetServers(repoconf.Servers)
+		}
+	}
+	return h, nil
 }
