@@ -7,6 +7,7 @@ import "C"
 
 import (
 	"fmt"
+	"io"
 	"unsafe"
 )
 
@@ -54,6 +55,25 @@ func (h Handle) SyncDbs() (DbList, error) {
 	return DbList{(*list)(dblistPtr), h}, nil
 }
 
+// SyncDbByName finds a registered database by name.
+func (h Handle) SyncDbByName(name string) (db *Db, err error) {
+	dblist, err := h.SyncDbs()
+	if err != nil {
+		return nil, err
+	}
+	dblist.ForEach(func(b Db) error {
+		if b.Name() == name {
+			db = &b
+			return io.EOF
+		}
+		return nil
+	})
+	if db != nil {
+		return db, nil
+	}
+	return nil, fmt.Errorf("database %s not found", name)
+}
+
 // Loads a sync database with given name and signature check level.
 func (h Handle) RegisterSyncDb(dbname string, siglevel SigLevel) (*Db, error) {
 	c_name := C.CString(dbname)
@@ -71,11 +91,11 @@ func (db Db) Name() string {
 }
 
 func (db Db) Servers() []string {
-  ptr := unsafe.Pointer(C.alpm_db_get_servers(db.ptr))
-  return StringList{(*list)(ptr)}.Slice()
+	ptr := unsafe.Pointer(C.alpm_db_get_servers(db.ptr))
+	return StringList{(*list)(ptr)}.Slice()
 }
 
-func (db Db) GetPkg(name string) (*Package, error) {
+func (db Db) PkgByName(name string) (*Package, error) {
 	c_name := C.CString(name)
 	defer C.free(unsafe.Pointer(c_name))
 	ptr := C.alpm_db_get_pkg(db.ptr, c_name)

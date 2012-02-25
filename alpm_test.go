@@ -41,7 +41,7 @@ func ExampleVerCmp() {
 func TestRevdeps(t *testing.T) {
 	fmt.Print("Testing reverse deps of glibc...\n")
 	db, _ := h.LocalDb()
-	pkg, _ := db.GetPkg("glibc")
+	pkg, _ := db.PkgByName("glibc")
 	for _, pkgname := range pkg.ComputeRequiredBy() {
 		fmt.Println(pkgname)
 	}

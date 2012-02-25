@@ -35,11 +35,11 @@ func (h *Handle) Release() error {
 	return nil
 }
 
-func (h Handle) GetRoot() string {
+func (h Handle) Root() string {
 	return C.GoString(C.alpm_option_get_root(h.ptr))
 }
 
-func (h Handle) GetDbPath() string {
+func (h Handle) DbPath() string {
 	return C.GoString(C.alpm_option_get_dbpath(h.ptr))
 }
 
