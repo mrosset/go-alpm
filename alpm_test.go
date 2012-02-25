@@ -42,8 +42,12 @@ func TestRevdeps(t *testing.T) {
 	fmt.Print("Testing reverse deps of glibc...\n")
 	db, _ := h.LocalDb()
 	pkg, _ := db.PkgByName("glibc")
-	for _, pkgname := range pkg.ComputeRequiredBy() {
-		fmt.Println(pkgname)
+	for i, pkgname := range pkg.ComputeRequiredBy() {
+		t.Logf(pkgname)
+		if i == 10 {
+			t.Logf("and %d more...", len(pkg.ComputeRequiredBy())-10)
+			return
+		}
 	}
 }
 
@@ -59,11 +63,11 @@ func TestLocalDB(t *testing.T) {
 	for _, pkg := range db.PkgCache().Slice() {
 		number++
 		if number <= 15 {
-			fmt.Printf("%v \n", pkg.Name())
+			t.Logf("%v", pkg.Name())
 		}
 	}
 	if number > 15 {
-		fmt.Printf("%d more packages...\n", number-15)
+		t.Logf("%d more packages...", number-15)
 	}
 }
 
