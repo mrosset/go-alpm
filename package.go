@@ -138,6 +138,11 @@ func (pkg Package) Replaces() DependList {
 	return DependList{(*list)(ptr)}
 }
 
+func (pkg Package) Backup() BackupList {
+	ptr := unsafe.Pointer(C.alpm_pkg_get_backup(pkg.pmpkg))
+	return BackupList{(*list)(ptr)}
+}
+
 func (pkg Package) Groups() StringList {
 	ptr := unsafe.Pointer(C.alpm_pkg_get_groups(pkg.pmpkg))
 	return StringList{(*list)(ptr)}
