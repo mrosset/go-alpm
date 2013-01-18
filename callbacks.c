@@ -1,13 +1,14 @@
+#include <stdint.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <alpm.h>
 
-void logCallback(unsigned int level, char *cstring);
+void logCallback(uint16_t level, char *cstring);
 
 void go_alpm_log_cb(alpm_loglevel_t level, const char *fmt, va_list arg) {
   char *s = malloc(128);
   if (s == NULL) return;
-  int length = vsnprintf(s, 128, fmt, arg);
+  int16_t length = vsnprintf(s, 128, fmt, arg);
   if (length > 128) {
     length = (length + 16) & ~0xf;
     s = realloc(s, length);
