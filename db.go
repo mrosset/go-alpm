@@ -39,7 +39,7 @@ func (l DbList) Slice() []Db {
 
 // Returns the local database relative to the given handle.
 func (h Handle) LocalDb() (*Db, error) {
-	db := C.alpm_option_get_localdb(h.ptr)
+	db := C.alpm_get_localdb(h.ptr)
 	if db == nil {
 		return nil, h.LastError()
 	}
@@ -47,7 +47,7 @@ func (h Handle) LocalDb() (*Db, error) {
 }
 
 func (h Handle) SyncDbs() (DbList, error) {
-	dblist := C.alpm_option_get_syncdbs(h.ptr)
+	dblist := C.alpm_get_syncdbs(h.ptr)
 	if dblist == nil {
 		return DbList{nil, h}, h.LastError()
 	}
@@ -79,7 +79,7 @@ func (h Handle) RegisterSyncDb(dbname string, siglevel SigLevel) (*Db, error) {
 	c_name := C.CString(dbname)
 	defer C.free(unsafe.Pointer(c_name))
 
-	db := C.alpm_db_register_sync(h.ptr, c_name, C.alpm_siglevel_t(siglevel))
+	db := C.alpm_register_syncdb(h.ptr, c_name, C.alpm_siglevel_t(siglevel))
 	if db == nil {
 		return nil, h.LastError()
 	}
