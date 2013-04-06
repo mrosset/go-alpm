@@ -17,7 +17,7 @@ func Init(root, dbpath string) (*Handle, error) {
 	defer C.free(unsafe.Pointer(c_root))
 	c_dbpath := C.CString(dbpath)
 	defer C.free(unsafe.Pointer(c_dbpath))
-	var c_err C.enum__alpm_errno_t
+	var c_err C.alpm_errno_t
 	h := C.alpm_initialize(c_root, c_dbpath, &c_err)
 
 	if c_err != 0 {
