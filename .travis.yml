@@ -1,1 +1,0 @@
-script: curl https://raw.github.com/daaku/go.travis/master/install | sh
